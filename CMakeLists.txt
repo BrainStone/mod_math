@@ -34,3 +34,6 @@ set(public_headers
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(Installing)
+
+# Testing
+add_subdirectory(test)
