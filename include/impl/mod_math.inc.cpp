@@ -8,13 +8,36 @@ template <std::integral T>
 constexpr num<T>::num(const T& val) : val(val){};
 
 template <std::integral T>
+template <std::integral U>
+constexpr num<T>::num(const num<U>& other) : num(static_cast<T>(other.val)){};
+
+template <std::integral T>
+template <std::integral U>
+constexpr num<T>& num<T>::operator=(const num<U>& other) {
+	this->val = static_cast<T>(other.val);
+
+	return *this;
+}
+
+template <std::integral T>
 constexpr num<T>::operator T() const {
 	return this->val;
 }
 
 template <std::integral T>
-constexpr auto num<T>::operator<=>(const num<T>& other) const {
+constexpr std::strong_ordering num<T>::operator<=>(const num<T>& other) const {
 	return this->val <=> other.val;
+}
+
+template <std::integral T>
+template <std::integral U>
+constexpr std::strong_ordering num<T>::operator<=>(const num<U>& other) const {
+	using X = typename std::common_type_t<T, U>;
+
+	const num<X> rhs(*this);
+	const num<X> lhs(other);
+
+	return rhs <=> lhs;
 }
 
 namespace literals {
