@@ -49,16 +49,16 @@ public:
 template <std::integral T>
 class expr {
 private:
-	expr<T>* const param1;
-	expr<T>* const param2;
+	const expr<T>* const param1;
+	const expr<T>* const param2;
 	const std::function<T(const T&, const T&)>* const action;
 	num<T>* const val;
 	std::optional<T> last_mod{};
 
-	constexpr expr(expr<T>& param1, expr<T>& param2, const std::function<T(const T&, const T&)>& action);
+	constexpr expr(const expr<T>& param1, const expr<T>& param2, const std::function<T(const T&, const T&)>& action);
 	constexpr expr(num<T>& val);
 
-	constexpr void apply_mod(const T& mod);
+	constexpr void apply_mod(const T& mod) const;
 
 public:
 	constexpr expr(const expr<T>& other) = delete;

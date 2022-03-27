@@ -53,7 +53,9 @@ constexpr std::strong_ordering num<T>::operator<=>(const num<U>& other) const {
 
 template <std::integral T>
 constexpr expr<T> num<T>::operator+(const num<T>& other) const {
-	return *this + expr<T>(other);
+	expr<T> var{num<T>{other}};
+
+	return operator+(var);
 }
 
 template <std::integral T>
@@ -66,14 +68,15 @@ constexpr expr<T> num<T>::operator+(const expr<T>& other) const {
 // ==========================
 
 template <std::integral T>
-constexpr expr<T>::expr(expr<T>& param1, expr<T>& param2, const std::function<T(const T&, const T&)>& action)
+constexpr expr<T>::expr(const expr<T>& param1, const expr<T>& param2,
+                        const std::function<T(const T&, const T&)>& action)
     : param1(&param1), param2(&param2), action(&action), val(nullptr) {}
 
 template <std::integral T>
 constexpr expr<T>::expr(num<T>& val) : param1(nullptr), param2(nullptr), action(nullptr), val(&val) {}
 
 template <std::integral T>
-constexpr void expr<T>::apply_mod(const T& mod) {
+constexpr void expr<T>::apply_mod(const T& mod) const {
 	if (param1 == nullptr) {
 		val->apply_mod(mod);
 	} else {
@@ -103,7 +106,7 @@ constexpr expr<T>::operator num<T>() const {
 
 template <std::integral T>
 constexpr expr<T> expr<T>::operator+(const num<T>& other) const {
-	return *this + expr<T>(other);
+	return operator+(expr<T>(other));
 }
 
 template <std::integral T>
