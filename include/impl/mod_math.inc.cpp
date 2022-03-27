@@ -4,6 +4,17 @@
 #include "mod_math.hpp"
 
 namespace mod_math {
+// ==========================
+// class num<T>
+// ==========================
+
+template <std::integral T>
+constexpr void num<T>::apply_mod(const T& mod) {
+	if (!last_mod.has_value() || ((*last_mod > mod) && (val > mod))) val %= mod;
+
+	last_mod = mod;
+}
+
 template <std::integral T>
 constexpr num<T>::num(const T& val) : val(val){};
 
@@ -38,6 +49,46 @@ constexpr std::strong_ordering num<T>::operator<=>(const num<U>& other) const {
 	const num<X> lhs(other);
 
 	return rhs <=> lhs;
+}
+
+// ==========================
+// class expr<T>
+// ==========================
+
+template <std::integral T>
+constexpr expr<T>::expr(expr<T>& param1, expr<T>& param2, const std::function<T(const T&, const T&)>& action)
+    : param1(&param1), param2(&param2), action(&action), val(nullptr) {}
+
+template <std::integral T>
+constexpr expr<T>::expr(num<T>& val) : param1(nullptr), param2(nullptr), action(nullptr), val(&val) {}
+
+template <std::integral T>
+constexpr void expr<T>::apply_mod(const T& mod) {
+	if (param1 == nullptr) {
+		val->apply_mod(mod);
+	} else {
+		param1->apply_mod(mod);
+		param2->apply_mod(mod);
+	}
+
+	last_mod = mod;
+}
+
+template <std::integral T>
+constexpr expr<T>::operator T() const {
+	if (param1 == nullptr) {
+		return static_cast<T>(*val);
+	} else {
+		return (*action)(static_cast<T>(*param1), static_cast<T>(*param2));
+	}
+}
+
+template <std::integral T>
+constexpr expr<T>::operator num<T>() const {
+	num<T> res{static_cast<T>(*this)};
+	res.last_mod = this->last_mod;
+
+	return res;
 }
 
 namespace literals {

@@ -2,6 +2,8 @@
 
 #include <compare>
 #include <concepts>
+#include <functional>
+#include <optional>
 #include <type_traits>
 
 namespace mod_math {
@@ -12,6 +14,9 @@ template <std::integral T>
 class num {
 private:
 	T val;
+	std::optional<T> last_mod{};
+
+	constexpr void apply_mod(const T& mod);
 
 public:
 	constexpr num() = default;
@@ -35,6 +40,34 @@ public:
 	// We're friends with outselves
 	template <std::integral U>
 	friend class num;
+	friend class expr<T>;
+};
+
+template <std::integral T>
+class expr {
+private:
+	expr<T>* const param1;
+	expr<T>* const param2;
+	const std::function<T(const T&, const T&)>* const action;
+	num<T>* const val;
+	std::optional<T> last_mod{};
+
+	constexpr expr(expr<T>& param1, expr<T>& param2, const std::function<T(const T&, const T&)>& action);
+	constexpr expr(num<T>& val);
+
+	void apply_mod(const T& mod);
+
+public:
+	constexpr expr(const expr<T>& other) = delete;
+	constexpr expr(expr<T>&& other) = delete;
+
+	constexpr expr<T>& operator=(const expr<T>& other) = delete;
+	constexpr expr<T>& operator=(expr<T>&& other) = delete;
+
+	constexpr operator T() const;
+	constexpr operator num<T>() const;
+
+	friend class num<T>;
 };
 
 namespace literals {
