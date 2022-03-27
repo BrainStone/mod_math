@@ -37,6 +37,9 @@ public:
 	template <std::integral U>
 	constexpr std::strong_ordering operator<=>(const num<U>& other) const;
 
+	constexpr expr<T> operator+(const num<T>& other) const;
+	constexpr expr<T> operator+(const expr<T>& other) const;
+
 	// We're friends with outselves
 	template <std::integral U>
 	friend class num;
@@ -55,7 +58,7 @@ private:
 	constexpr expr(expr<T>& param1, expr<T>& param2, const std::function<T(const T&, const T&)>& action);
 	constexpr expr(num<T>& val);
 
-	void apply_mod(const T& mod);
+	constexpr void apply_mod(const T& mod);
 
 public:
 	constexpr expr(const expr<T>& other) = delete;
@@ -66,6 +69,9 @@ public:
 
 	constexpr operator T() const;
 	constexpr operator num<T>() const;
+
+	constexpr expr<T> operator+(const num<T>& other) const;
+	constexpr expr<T> operator+(const expr<T>& other) const;
 
 	friend class num<T>;
 };

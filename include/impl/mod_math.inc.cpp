@@ -51,6 +51,16 @@ constexpr std::strong_ordering num<T>::operator<=>(const num<U>& other) const {
 	return rhs <=> lhs;
 }
 
+template <std::integral T>
+constexpr expr<T> num<T>::operator+(const num<T>& other) const {
+	return *this + expr<T>(other);
+}
+
+template <std::integral T>
+constexpr expr<T> num<T>::operator+(const expr<T>& other) const {
+	return expr<T>(expr<T>(*this), other, operator+);
+}
+
 // ==========================
 // class expr<T>
 // ==========================
@@ -89,6 +99,16 @@ constexpr expr<T>::operator num<T>() const {
 	res.last_mod = this->last_mod;
 
 	return res;
+}
+
+template <std::integral T>
+constexpr expr<T> expr<T>::operator+(const num<T>& other) const {
+	return *this + expr<T>(other);
+}
+
+template <std::integral T>
+constexpr expr<T> expr<T>::operator+(const expr<T>& other) const {
+	return expr<T>(*this, other, operator+);
 }
 
 namespace literals {

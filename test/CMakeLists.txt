@@ -30,6 +30,6 @@ enable_testing()
 add_test(${PROJECT_NAME} ${PROJECT_NAME})
 
 # Add test cpp file
-add_executable(${PROJECT_NAME} "test_comparison.cpp" "test_constructor.cpp")
+add_executable(${PROJECT_NAME} "test_comparison.cpp" "test_constructor.cpp" "test_expression.cpp")
 # Link test executable against gtest & gtest_main
 target_link_libraries(${PROJECT_NAME} PRIVATE gtest gtest_main mod_math)
